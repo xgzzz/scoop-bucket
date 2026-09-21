@@ -1,0 +1,85 @@
+name: checkver
+
+# 每天检查上游仓库是否有新 Release；有则更新 manifest 的 version/url/hash 并提交。
+# 只依赖 GitHub API 与 manifest 里的 autoupdate 模板，不需要安装 Scoop。
+on:
+  schedule:
+    # 03:23 UTC = 北京时间 11:23
+    - cron: '23 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  checkver:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update manifests from upstream releases
+        id: update
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+
+          $headers = @{
+            Authorization = "Bearer $env:GITHUB_TOKEN"
+            Accept        = 'application/vnd.github+json'
+            'User-Agent'  = 'scoop-bucket-checkver'
+          }
+
+          $changed = @()
+          foreach ($file in Get-ChildItem -Path bucket -Filter *.json) {
+            $text = Get-Content $file.FullName -Raw -Encoding UTF8
+            $mf   = $text | ConvertFrom-Json
+
+            $slug = "$($mf.checkver.github)" -replace '^https?://github\.com/', '' -replace '\.git$', ''
+            if ([string]::IsNullOrWhiteSpace($slug)) {
+              Write-Host "$($file.Name): 没有 checkver.github，跳过"
+              continue
+            }
+
+            $release = Invoke-RestMethod -Uri "https://api.github.com/repos/$slug/releases/latest" -Headers $headers
+            $latest  = "$($release.tag_name)" -replace '^v', ''
+            if ($latest -eq "$($mf.version)") {
+              Write-Host "$($file.Name): 已是最新 ($latest)"
+              continue
+            }
+
+            $oldUrl  = "$($mf.architecture.'64bit'.url)"
+            $oldHash = "$($mf.architecture.'64bit'.hash)"
+            $tmpl    = "$($mf.autoupdate.architecture.'64bit'.url)"
+            $newUrl  = $tmpl -replace '\$version', $latest
+            if ($newUrl -eq $tmpl) {
+              throw "$($file.Name): autoupdate url 里没有 `$version 占位符"
+            }
+
+            # 上游同时发布了 <zip>.sha256，直接取它作为新哈希
+            $tmp = Join-Path $env:RUNNER_TEMP 'asset.sha256'
+            Invoke-WebRequest -Uri "$newUrl.sha256" -OutFile $tmp -UseBasicParsing
+            $newHash = ([regex]::Match((Get-Content $tmp -Raw), '[0-9a-fA-F]{64}').Value).ToLower()
+            if (-not $newHash) { throw "$($file.Name): 无法从 $newUrl.sha256 解析哈希" }
+
+            # 只做精确文本替换，保持 manifest 原有格式
+            $new = $text.Replace($oldUrl, $newUrl).Replace($oldHash, $newHash).Replace("`"$($mf.version)`"", "`"$latest`"")
+            [System.IO.File]::WriteAllText($file.FullName, $new, (New-Object System.Text.UTF8Encoding($false)))
+
+            Write-Host "$($file.Name): $($mf.version) -> $latest  hash=$newHash"
+            $changed += $file.Name
+          }
+
+          "changed=$($changed -join ',')" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      - name: Commit and push
+        if: steps.update.outputs.changed != ''
+        shell: pwsh
+        run: |
+          git config user.name  'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add bucket
+          git commit -m "chore: update ${{ steps.update.outputs.changed }}"
+          git push
