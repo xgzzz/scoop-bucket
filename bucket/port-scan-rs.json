@@ -1,12 +1,12 @@
 {
-    "version": "0.2.3",
+    "version": "0.2.4",
     "description": "本地端口检测、抓包与 pcap 分析工具（CLI + GUI）",
     "homepage": "https://github.com/xgzzz/port-scan-rs",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/xgzzz/port-scan-rs/releases/download/v0.2.3/port-scan-rs-0.2.3-x64.zip",
-            "hash": "da6b245429835221bd7aad626003fd723f35adf869495b931777dde744ea824a"
+            "url": "https://github.com/xgzzz/port-scan-rs/releases/download/v0.2.4/port-scan-rs-0.2.4-x64.zip",
+            "hash": "a1f9de42b5ff9a066ffad58cb0ec8f3fb2cbd0d05868d90cf9e6aab3e7be1752"
         }
     },
     "bin": [
