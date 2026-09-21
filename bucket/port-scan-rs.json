@@ -1,0 +1,46 @@
+{
+    "version": "0.2.0",
+    "description": "本地端口检测、抓包与 pcap 分析工具（CLI + GUI）",
+    "homepage": "https://github.com/xgzzz/port-scan-rs",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/xgzzz/port-scan-rs/releases/download/v0.2.0/port-scan-rs-0.2.0-x64.zip",
+            "hash": "4ad18fd87d5052eb2787c86931cc2264a1b4544ea1dc22cd880a8725b3bf24db"
+        }
+    },
+    "bin": [
+        [
+            "port-scan-rs-lite.exe",
+            "port-scan-rs"
+        ],
+        [
+            "port-scan-rs-full.exe",
+            "port-scan-rs-full"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "port-scan-rs-lite.exe",
+            "Port Scan RS"
+        ]
+    ],
+    "notes": [
+        "port-scan-rs       零依赖版本：local / scan / ifaces / analyze / gui",
+        "port-scan-rs-full  额外支持网卡抓包，需要自行安装 Npcap: https://npcap.com/#download",
+        "未安装 Npcap 时 full 版本也能正常启动，只在抓包时提示安装步骤"
+    ],
+    "checkver": {
+        "github": "https://github.com/xgzzz/port-scan-rs"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/xgzzz/port-scan-rs/releases/download/v$version/port-scan-rs-$version-x64.zip"
+            }
+        },
+        "hash": {
+            "url": "$url.sha256"
+        }
+    }
+}
