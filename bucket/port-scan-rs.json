@@ -1,12 +1,12 @@
 {
-    "version": "0.2.1",
+    "version": "0.2.2",
     "description": "本地端口检测、抓包与 pcap 分析工具（CLI + GUI）",
     "homepage": "https://github.com/xgzzz/port-scan-rs",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/xgzzz/port-scan-rs/releases/download/v0.2.1/port-scan-rs-0.2.1-x64.zip",
-            "hash": "f062ededfe1a7cd0440f96da27b47b1f7a6583996867ba5770f6801ee73bc428"
+            "url": "https://github.com/xgzzz/port-scan-rs/releases/download/v0.2.2/port-scan-rs-0.2.2-x64.zip",
+            "hash": "a2e338dae135db885e130f3a0985fa030949ef6c741d953f5d32e46ec30e6835"
         }
     },
     "bin": [
@@ -21,13 +21,21 @@
     ],
     "shortcuts": [
         [
-            "port-scan-rs-lite.exe",
+            "port-scan-rs-gui.exe",
             "Port Scan RS"
         ]
+    ],
+    "post_install": [
+        "$exe = if ($dir) { Join-Path $dir 'port-scan-rs-gui.exe' } else { $null }",
+        "if ($exe -and (Test-Path $exe)) { $lnk = Join-Path ([Environment]::GetFolderPath('Desktop')) 'Port Scan RS.lnk'; $ws = New-Object -ComObject WScript.Shell; $sc = $ws.CreateShortcut($lnk); $sc.TargetPath = $exe; $sc.WorkingDirectory = $dir; $sc.Save() }"
+    ],
+    "pre_uninstall": [
+        "Remove-Item (Join-Path ([Environment]::GetFolderPath('Desktop')) 'Port Scan RS.lnk') -ErrorAction SilentlyContinue"
     ],
     "notes": [
         "port-scan-rs       零依赖版本：local / scan / ifaces / analyze / gui",
         "port-scan-rs-full  额外支持网卡抓包，需要自行安装 Npcap: https://npcap.com/#download",
+        "port-scan-rs-gui   GUI 专用程序，开始菜单/桌面快捷方式指向它，双击不会出现控制台窗口",
         "未安装 Npcap 时 full 版本也能正常启动，只在抓包时提示安装步骤"
     ],
     "checkver": {
