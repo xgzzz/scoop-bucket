@@ -1,12 +1,12 @@
 {
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "多线程、可断点续传的 HTTP/HTTPS 文件下载器 + 视频源下载（CLI + 深色 GUI）",
     "homepage": "https://github.com/xgzzz/BearDown",
     "license": "MIT",
     "architecture": {
         "64bit": {
-            "url": "https://github.com/xgzzz/BearDown/releases/download/v0.1.0/BearDown-0.1.0-x64.zip",
-            "hash": "46a56f210efe842254703131bd549c5b5433baddc9698f650c6afd37b0e6a60d"
+            "url": "https://github.com/xgzzz/BearDown/releases/download/v0.1.1/BearDown-0.1.1-x64.zip",
+            "hash": "ac48dcdc5ef718949b815725e9d958354f2f02e02faa98fc8df26fce39bc4581"
         }
     },
     "bin": [
