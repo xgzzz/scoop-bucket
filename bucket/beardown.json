@@ -1,0 +1,51 @@
+{
+    "version": "0.1.0",
+    "description": "多线程、可断点续传的 HTTP/HTTPS 文件下载器 + 视频源下载（CLI + 深色 GUI）",
+    "homepage": "https://github.com/xgzzz/BearDown",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/xgzzz/BearDown/releases/download/v0.1.0/BearDown-0.1.0-x64.zip",
+            "hash": "f190065d58e1a2b4155cfa26a606bd3ed04d6d9ed8e3eb954b81c9e0776c5636"
+        }
+    },
+    "bin": [
+        [
+            "beardown-cli.exe",
+            "beardown"
+        ]
+    ],
+    "shortcuts": [
+        [
+            "beardown-gui.exe",
+            "BearDown"
+        ]
+    ],
+    "post_install": [
+        "$exe = Join-Path $dir 'beardown-gui.exe'",
+        "if (Test-Path $exe) { $lnk = Join-Path ([Environment]::GetFolderPath('Desktop')) 'BearDown.lnk'; $ws = New-Object -ComObject WScript.Shell; $sc = $ws.CreateShortcut($lnk); $sc.TargetPath = $exe; $sc.WorkingDirectory = $dir; $sc.Save() }"
+    ],
+    "pre_uninstall": [
+        "Remove-Item (Join-Path ([Environment]::GetFolderPath('Desktop')) 'BearDown.lnk') -ErrorAction SilentlyContinue"
+    ],
+    "notes": [
+        "beardown       CLI 入口：add / list / resume / verify / rm（分块下载、断点续传、多源镜像）",
+        "BearDown(桌面) 深色 GUI，双击无控制台窗口；视频任务支持暂停/取消",
+        "视频源下载需另装 yt-dlp：scoop install yt-dlp（或 pip install yt-dlp）",
+        "任务数据库：%USERPROFILE%\\.beardown\\beardown.db",
+        "代理：自动读取 Windows 系统代理；可设 HTTPS_PROXY 环境变量显式覆盖"
+    ],
+    "checkver": {
+        "github": "https://github.com/xgzzz/BearDown"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/xgzzz/BearDown/releases/download/v$version/BearDown-$version-x64.zip"
+            }
+        },
+        "hash": {
+            "url": "$url.sha256"
+        }
+    }
+}
