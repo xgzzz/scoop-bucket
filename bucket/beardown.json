@@ -6,7 +6,7 @@
     "architecture": {
         "64bit": {
             "url": "https://github.com/xgzzz/BearDown/releases/download/v0.1.0/BearDown-0.1.0-x64.zip",
-            "hash": "f190065d58e1a2b4155cfa26a606bd3ed04d6d9ed8e3eb954b81c9e0776c5636"
+            "hash": "46a56f210efe842254703131bd549c5b5433baddc9698f650c6afd37b0e6a60d"
         }
     },
     "bin": [
